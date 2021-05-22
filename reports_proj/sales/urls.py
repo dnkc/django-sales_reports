@@ -11,3 +11,4 @@ urlpatterns = [
     path('sales/<pk>/', SaleDetailView.as_view(), name='detail')
 
 ]
+
