@@ -1,24 +1,19 @@
 {%extends "base.html"%}
 
 {%block title%}
-sales list
+    {{object.transaction_id}}
 {%endblock%}
 
 {%block content%}
-sales list
+detail view
     <br />
 <!-- if inheriting from list view need to loop through object_list
     unless we change context object name
 -->
+    {{object.pk}}
+    <br />
+    {{object.transaction_id}}
 
-{%for obj in object_list%}
-    <a href="{{obj.get_absolute_url}}">
-
-            {{obj.transaction_id}}
-    </a>
-
-
-{%endfor%}
 
 
 {%endblock%}

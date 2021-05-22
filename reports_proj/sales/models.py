@@ -4,7 +4,7 @@ from customers.models import Customer
 from profiles.models import Profile
 from django.utils import timezone
 from .utils import generate_code
-
+from django.shortcuts import reverse
 # Create your models here.
 class Position(models.Model): # positions = product * quantity
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -31,6 +31,10 @@ class Sale(models.Model): # can consist of many positions, i.e. 3 products diffe
 
     def __str__(self):
         return f"Sales for the amount of ${self.total_price}"
+
+    def get_absolute_url(self):
+        return reverse('sales:detail', kwargs={'pk': self.pk}) #need to refer to particular path and name as in views.py
+
 
     def save(self, *args, **kwargs):
         if self.transaction_id == '':
