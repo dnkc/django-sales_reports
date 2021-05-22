@@ -11,4 +11,21 @@
     {{form|crispy}}
     <button type="submit" class="btn btn-primary mt-3">search</button>
 </form>
-{%endblock content%}
+<br />
+
+{% if sales_df%}
+<h3>Sale DataFrame</h3>
+    {{sales_df|safe}}
+<h3>Posititons DataFrame</h3>
+    {{positions_df|safe}}
+<h3>Merged DataFrame</h3>
+    {{merged_df|safe}}
+<h3>Final DataFrame</h3>
+    {{df|safe}}
+<h3>Chart</h3>
+    <img src="data:image/png;base64, {{chart|safe}}" />
+{%else%}
+    <h3>No Data</h3>
+{%endif%}
+
+{%endblock%}
