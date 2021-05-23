@@ -1,14 +1,47 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
-{%block title%}
+{%load static %}
 
+{%block scripts%}
+
+    <script defer src="{% static 'sales/home.js' %}"  ></script>
+{%endblock scripts%}
+
+
+{%block title%}
+home
 {%endblock title%}
 
 {%block content%}
+<!-- Modal -->
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add report</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <div id="alert-box"></div>
+        <form id="report-form" autocomplete="off">
+            {% csrf_token %}
+            {{report_form|crispy}}
+            <button type="submit" class="btn btn-info mt-2">save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if no_data %}
+    <div class="alert alert-warning" role="alert">
+        {{no_data}}
+    </div>
+{% endif %}
 
 <form action="" method="POST">
     {%csrf_token%}
-    {{form|crispy}}
+    {{search_form|crispy}}
     <button type="submit" class="btn btn-primary mt-3">search</button>
 </form>
 <br />
@@ -22,10 +55,13 @@
     {{merged_df|safe}}
 <h3>Final DataFrame</h3>
     {{df|safe}}
-<h3>Chart</h3>
-    <img src="data:image/png;base64, {{chart|safe}}" />
-{%else%}
-    <h3>No Data</h3>
-{%endif%}
+    <img src="data:image/png;base64, {{chart|safe}}" id="img" />
+<!--    <button class="btn btn-success">report</button>-->
 
-{%endblock%}
+
+
+{%endif%}
+<button class="btn btn-primary not-visible" id="report-btn" data-bs-toggle="modal" data-bs-target="#reportModal">add report</button>
+<br />
+
+{%endblock content%}

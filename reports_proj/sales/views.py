@@ -5,7 +5,7 @@ from .forms import SalesSearchForm
 import pandas as pd
 # Create your views here.
 from .utils import get_salesman_from_id, get_customer_from_id, get_chart
-
+from reports.forms import ReportForm
 # IN TEMPLATES FOLDER, THE FOLDER SHOULD BE SAME NAME AS APP
 
 def home_view(request):
@@ -14,11 +14,15 @@ def home_view(request):
     merged_df = None
     df = None
     chart = None
-    form = SalesSearchForm(request.POST or None)
+    no_data = None
+    search_form = SalesSearchForm(request.POST or None)
+    report_form = ReportForm()
     if request.method == 'POST':
         date_from = request.POST.get('date_from')
         date_to = request.POST.get('date_to')
         chart_type = request.POST.get('chart_type')
+        results_by = request.POST.get('results_by')
+
         #print(date_from, date_to, chart_type)
         sale_qs = Sale.objects.filter(created__date__lte=date_to, created__date__gte=date_from)
         if len(sale_qs) > 0:
@@ -49,7 +53,7 @@ def home_view(request):
 
             df = merged_df.groupby('transaction_id', as_index=False)['price'].agg('sum')
 
-            chart = get_chart(chart_type, df, labels=df['transaction_id'].values)
+            chart = get_chart(chart_type, sales_df, results_by)
 
             positions_df = positions_df.to_html()
             sales_df = sales_df.to_html()
@@ -57,15 +61,17 @@ def home_view(request):
             df = df.to_html()
 
         else:
-            print("No data")
+            no_data = 'No data is available in this date range.'
 
     context = {
-        'form': form,
+        'search_form': search_form,
         'sales_df': sales_df,
         'positions_df': positions_df,
         'merged_df': merged_df,
         'df': df,
         'chart': chart,
+        'report_form': report_form,
+        'no_data': no_data,
     }
     return render(request, 'sales/home.html', context) # with dictionary can specify what you want to pass to template
 
