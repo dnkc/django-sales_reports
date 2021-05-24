@@ -1,5 +1,6 @@
 from django.db import models
 from profiles.models import Profile
+from django.shortcuts import reverse
 # Create your models here.
 
 class Report(models.Model):
@@ -12,3 +13,9 @@ class Report(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+    def get_absolute_url(self):
+        return reverse('reports:detail', kwargs={'pk': self.pk}) #need to refer to particular path and name as in views.py
+
+    class Meta:
+        ordering = ('-created',)
