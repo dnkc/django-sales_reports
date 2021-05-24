@@ -19,3 +19,16 @@
     width: 200px;
     border-radius: 50%;
 }
+
+.avatar-sm{
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+}
+
+.logo-sm{
+    height: 30px;
+    width: auto;
+}
+
+

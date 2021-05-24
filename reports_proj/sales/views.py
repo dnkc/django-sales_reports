@@ -7,7 +7,12 @@ import pandas as pd
 from .utils import get_salesman_from_id, get_customer_from_id, get_chart
 from reports.forms import ReportForm
 # IN TEMPLATES FOLDER, THE FOLDER SHOULD BE SAME NAME AS APP
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.csrf import csrf_exempt
 
+@login_required
+@csrf_exempt
 def home_view(request):
     sales_df = None
     positions_df = None
@@ -75,12 +80,12 @@ def home_view(request):
     }
     return render(request, 'sales/home.html', context) # with dictionary can specify what you want to pass to template
 
-class SaleListView(ListView): #class based view
+class SaleListView(LoginRequiredMixin, ListView): #class based view
     # need to specify model and template_name
     model = Sale
     template_name = 'sales/main.html'
 
-class SaleDetailView(DetailView):
+class SaleDetailView(LoginRequiredMixin, DetailView):
     model = Sale
     template_name = 'sales/detail.html'
 

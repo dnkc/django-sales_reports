@@ -18,17 +18,21 @@ import csv
 from django.utils.dateparse import parse_date
 from datetime import datetime
 from django.utils.timezone import make_aware
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+@login_required
 def create_report_view(request):
     if request.is_ajax():
         name = request.POST.get('name')
         remarks = request.POST.get('remarks')
         image = request.POST.get('image')
         ####################################################
-        get_author = User.objects.filter(username='testuser')[0].id
-        get_author = str(get_author)
+        #get_author = User.objects.filter(username='testuser')[0].id
+        #get_author = str(get_author)
         #################### DELETE get_author, implement below comment
-        author = Profile.objects.get(user=get_author)
-        # author = Profile.objects.get(user=request.user)
+        #author = Profile.objects.get(user=get_author)
+        author = Profile.objects.get(user=request.user)
         ###########################################################
         img = get_report_image(image)
 
@@ -42,15 +46,17 @@ def create_report_view(request):
         return JsonResponse({'msg': 'send'})
     return JsonResponse()
 
-class ReportListView(ListView): #class based view
+
+class ReportListView(LoginRequiredMixin, ListView): #class based view
     # need to specify model and template_name
     model = Report
     template_name = 'reports/main.html'
 
-class ReportDetailView(DetailView):
+class ReportDetailView(LoginRequiredMixin, DetailView):
     model = Report
     template_name = 'reports/detail.html'
 
+@login_required
 def render_pdf_view(request, pk):
     template_path = 'reports/pdf.html'
     obj = get_object_or_404(Report, pk=pk)
@@ -74,10 +80,10 @@ def render_pdf_view(request, pk):
        return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
 
-class UploadTemplateView(TemplateView):
+class UploadTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'reports/from_file.html'
 
-
+@login_required
 def csv_upload_view(request):
     #print('file is being sent')
     if request.method == 'POST':
@@ -105,9 +111,9 @@ def csv_upload_view(request):
                     if product_obj is not None:
                         customer_obj, _ = Customer.objects.get_or_create(name=customer)
                         # if creating, _ = True, if already exists _ = False
-                        get_salesman = User.objects.filter(username='testuser')[0].id
-                        get_salesman = str(get_salesman)
-                        salesman_obj = Profile.objects.get(user=get_salesman)
+                        #get_salesman = User.objects.filter(username='testuser')[0].id
+                        #get_salesman = str(get_salesman)
+                        salesman_obj = Profile.objects.get(user=request.user)
                         positions_obj = Position.objects.create(product=product_obj,
                                                                 quantity=quantity,
                                                                 created=date
